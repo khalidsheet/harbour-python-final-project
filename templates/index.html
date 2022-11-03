@@ -77,8 +77,8 @@
                         </div>
                         <div class="card-action">
                             <div class="card-actions">
-                                <button id="export" class="btn btn-success mt-3" onclick="exports()">Export to VTT
-                                </button>
+                                <a id="export" class="btn btn-success mt-3" href="{{ url_for('export_to_vtt') }}">Export to VTT
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -131,6 +131,7 @@
       fetch('/translate-clear', { method: 'POST' })
         .then(data => {
             transcript.innerHTML = "";
+            updatedTranscribed = ""
         })
     }
 
@@ -163,10 +164,8 @@
         console.log('test')
                 translatedText = "";
         fetch('/export-to-vtt', {
-            method: 'POST',
-            body: JSON.stringify(translation.innerHTML)
+            method: 'GET',
         })
-        .then(data => data.json())
         .then(data => {
             console.log(data)
         })

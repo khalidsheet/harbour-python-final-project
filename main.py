@@ -2,7 +2,7 @@ import os.path
 import pathlib
 import subprocess
 
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, send_file, send_from_directory, Response
 from werkzeug.utils import secure_filename
 from helpers import *
 from whisper.utils import write_vtt
@@ -48,7 +48,7 @@ def translate():
     file = open("static/file.json", "r")
     fileSegments = json.loads(file.read())
 
-    writeFile = open("static/file.json", "w")
+    
 
     body = request.get_json()
 
@@ -65,22 +65,41 @@ def translate():
             start = time.split(' --> ')[0]
             end = time.split(' --> ')[1]
             text = segment[1]
+
+
+            print(text)
             
             # now let's write to the json file
             fileSegments['segments'][index]['text'] = text
             fileSegments['segments'][index]['start'] = start
             fileSegments['segments'][index]['end'] = end
 
+
+    writeFile = open("static/file.json", "w")
     writeFile.write(json.dumps(fileSegments))
 
-    # what = []
-    # for entry in text['segments']:
-    #     what.append(entry['text'])
-    #
-    # translated = translate_with_google(what)
-    #
-    # print(translated['data']['translations'])
+    translatedText = []
+    for entry in fileSegments['segments']:
+        translatedText.append(entry['text'])
+    
 
+    print(translatedText)
+    translated = translate_with_google(translatedText)
+
+    tanslationFile = open('static/translation.json', 'w')
+    
+    translationSegments = []
+    for index, entry in enumerate(translated['data']['translations']):
+        translationSegments.append({
+            "id": index,
+            "seek": 0,
+            "start": float(fileSegments['segments'][index]['start']),
+            "end": float(fileSegments['segments'][index]['end']),
+            "text": str(entry['translatedText']),
+        })
+
+
+    tanslationFile.write(json.dumps(translationSegments))
     return {}
 
 
@@ -93,32 +112,42 @@ def translate_clear():
     return {}
 
 
-@app.post('/export-to-vtt')
+@app.get('/export-to-vtt')
 def export_to_vtt():
-    vtt_file = open('translated.vtt', 'w')
-
-    file = open("static/file.json", "r")
+    # vtt_file = open('static/translated.vtt', 'w')
+    file = open("static/translation.json", "r")
     text = json.loads(file.read())
-    for segment in text['segments']:
-        # t += f"{entry['time']}\n"
-        # t += f"{translated['data']['translations'][counter]['translatedText']} align:middle\n\n"
-        # counter = counter + 1
-        # print(entry)
-        write_vtt(segment, vtt_file)
+    t = "WEBVTT\n"
 
-    # exporttovtt = pathlib.Path('translated.vtt')
+    for segment in text:
+        t += f"{format_timestamp(segment['start'])} --> {format_timestamp(segment['end'])}\n"
+        t += f"{segment['text'].strip()}\n\n"
+        
+    print(t)
+    # write_vtt(text, vtt_file)
 
-    # exporttovtt.write_bytes(t.encode('UTF-8'))
+    exporttovtt = pathlib.Path('static/translated.vtt')
+    exporttovtt.write_bytes(t.encode('UTF-8'))
 
-    data = request.get_data()
-    data = json.loads(data)
-    vtt = open('translation.vtt', 'w')
-    vtt.write(data)
-    vtt.close()
-    print(data)
 
-    return {}
+    return Response(
+        t,
+        mimetype="text/vtt",
+        headers={"Content-disposition": "attachment; filename=translation.vtt"}
+    )
+    #return send_from_directory(directory="static", path="translated.vtt", as_attachment=True)
 
+
+@app.get('/download')
+def download():
+    return send_file("static/translated.vtt", as_attachment=True)
+
+
+# @app.after_request
+# def cache_control(response):
+#     response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
+#     response.headers['Cache-Control'] = 'public, max-age=0'
+#     return response
 
 if __name__ == "__main__":
     app.run(debug=True)
