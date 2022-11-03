@@ -4,8 +4,8 @@
         {
             "id": 0,
             "seek": 0,
-            "start": 0.0,
-            "end": 16.92,
+            "start": "0",
+            "end": "13.92",
             "text": " Over the past two years, youth unemployment has been on the rise. It currently represents",
             "tokens": [
                 50364,
@@ -75,8 +75,8 @@
         {
             "id": 1,
             "seek": 0,
-            "start": 16.92,
-            "end": 21.76,
+            "start": "16.92",
+            "end": "21.76",
             "text": " just under 40% of all unemployment in Australia. Young graduates leaving the university and",
             "tokens": [
                 50364,
@@ -146,8 +146,8 @@
         {
             "id": 2,
             "seek": 0,
-            "start": 21.76,
-            "end": 27.12,
+            "start": "21.76",
+            "end": "27.12",
             "text": " finding it more and more difficult to enter any form of creative industry. Now, the common",
             "tokens": [
                 50364,
@@ -217,8 +217,8 @@
         {
             "id": 3,
             "seek": 2712,
-            "start": 27.12,
-            "end": 32.32,
+            "start": "27.12",
+            "end": "32.32",
             "text": " stipulation is that you can't get a job without experience, but you can't get a job to get",
             "tokens": [
                 50364,
@@ -314,8 +314,8 @@
         {
             "id": 4,
             "seek": 2712,
-            "start": 32.32,
-            "end": 40.480000000000004,
+            "start": "32.32",
+            "end": "40.480000000000004",
             "text": " the experience. Now, meanwhile, 42% of small businesses failed in 2003 to 2007, and the",
             "tokens": [
                 50364,
@@ -411,8 +411,8 @@
         {
             "id": 5,
             "seek": 2712,
-            "start": 40.480000000000004,
-            "end": 46.400000000000006,
+            "start": "40.480000000000004",
+            "end": "46.400000000000006",
             "text": " figures haven't improved much. Amongst many reasons this is happening is a consistent",
             "tokens": [
                 50364,
@@ -508,8 +508,8 @@
         {
             "id": 6,
             "seek": 2712,
-            "start": 46.400000000000006,
-            "end": 52.8,
+            "start": "46.400000000000006",
+            "end": "52.8",
             "text": " lack of quality in their branding, marketing, websites and designs. The kind of training",
             "tokens": [
                 50364,
@@ -605,8 +605,8 @@
         {
             "id": 7,
             "seek": 5280,
-            "start": 52.8,
-            "end": 58.04,
+            "start": "52.8",
+            "end": "58.04",
             "text": " that these graduates have just spent three to six years training for. Now, what if there",
             "tokens": [
                 50364,
@@ -662,8 +662,8 @@
         {
             "id": 8,
             "seek": 5280,
-            "start": 58.04,
-            "end": 63.839999999999996,
+            "start": "58.04",
+            "end": "63.839999999999996",
             "text": " was an enterprise that bridged these two sets of frightening statistics? I want to build",
             "tokens": [
                 50364,
@@ -719,8 +719,8 @@
         {
             "id": 9,
             "seek": 6384,
-            "start": 63.84,
-            "end": 92.96000000000001,
+            "start": "63.84",
+            "end": "92.96000000000001",
             "text": " that bridge.",
             "tokens": [
                 50364,

@@ -46,58 +46,42 @@ def upload():
 @app.post('/translate')
 def translate():
     file = open("static/file.json", "r")
-    text = json.loads(file.read())
+    fileSegments = json.loads(file.read())
 
-    print(text)
+    writeFile = open("static/file.json", "w")
+
+    body = request.get_json()
+
+    # now i need to split the body
+    segments = body.split('\n\n')
+
+    for index, segment in enumerate(segments):
+        segment = segment.split('\n')
+        
+        if len(segment) > 1:
+            time = segment[0]
+
+            # main tokens
+            start = time.split(' --> ')[0]
+            end = time.split(' --> ')[1]
+            text = segment[1]
+            
+            # now let's write to the json file
+            fileSegments['segments'][index]['text'] = text
+            fileSegments['segments'][index]['start'] = start
+            fileSegments['segments'][index]['end'] = end
+
+    writeFile.write(json.dumps(fileSegments))
+
     # what = []
-    # for entry in text:
+    # for entry in text['segments']:
     #     what.append(entry['text'])
-
+    #
     # translated = translate_with_google(what)
-
+    #
     # print(translated['data']['translations'])
-    vtt_file = open('translated.vtt', 'w')
 
-    t = ""
-    counter = 0
-    for segment in text['segments']:
-        # t += f"{entry['time']}\n"
-        # t += f"{translated['data']['translations'][counter]['translatedText']} align:middle\n\n"
-        # counter = counter + 1
-        # print(entry)
-        write_vtt(segment, vtt_file)
-
-    # exporttovtt = pathlib.Path('translated.vtt')
-
-    # exporttovtt.write_bytes(t.encode('UTF-8'))
-
-
-
-
-    # subprocess.run([
-    #     "ffmpeg",
-    #     "-i",
-    #     "./static/uploads/file.mp4",
-    #     "-i",
-    #     "./translated.vtt",
-    #     "-map",
-    #     "0:v",
-    #     "-map",
-    #     "0:a",
-    #     "-map",
-    #     "1",
-    #     "-metadata:s:s:0",
-    #     "language=[en]",
-    #     "-c:v",
-    #     "copy",
-    #     "-c:a",
-    #     "copy",
-    #     "-c:s",
-    #     "srt",
-    #     "out.mp4"
-    # ])
-
-    return text
+    return {}
 
 
 @app.post('/translate-clear')
@@ -111,6 +95,21 @@ def translate_clear():
 
 @app.post('/export-to-vtt')
 def export_to_vtt():
+    vtt_file = open('translated.vtt', 'w')
+
+    file = open("static/file.json", "r")
+    text = json.loads(file.read())
+    for segment in text['segments']:
+        # t += f"{entry['time']}\n"
+        # t += f"{translated['data']['translations'][counter]['translatedText']} align:middle\n\n"
+        # counter = counter + 1
+        # print(entry)
+        write_vtt(segment, vtt_file)
+
+    # exporttovtt = pathlib.Path('translated.vtt')
+
+    # exporttovtt.write_bytes(t.encode('UTF-8'))
+
     data = request.get_data()
     data = json.loads(data)
     vtt = open('translation.vtt', 'w')
