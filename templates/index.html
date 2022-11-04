@@ -73,7 +73,7 @@
 
                         <div class="card-text">
                             <textarea class="w-100" id="translation" rows="20"
-                                      placeholder="No translations yet"></textarea>
+                                      placeholder="No translations yet" readonly></textarea>
                         </div>
                         <div class="card-action">
                             <div class="card-actions">
@@ -164,17 +164,6 @@
         })
         .then(data => data.json())
         .then(data => {
-            // console.log(data.data.translations)
-            // parsedData.map((parsed, i) => {
-            //     translatedParsedData.push({...parsed, text: data.data.translations[i].translatedText})
-            // });
-
-            // let translatedText = ""
-            // translatedParsedData.map((entry) => {
-            //     translatedText += `${entry.time}\n`
-            //     translatedText += `${entry.text}\n\n`
-            // })
-            // translation.innerHTML = translatedText;
             window.location.reload();
         })
     })

@@ -1,11 +1,8 @@
 import os.path
 import pathlib
-import subprocess
 
-from flask import Flask, render_template, request, redirect, flash, send_file, send_from_directory, Response
-from werkzeug.utils import secure_filename
+from flask import Flask, render_template, request, redirect, flash, send_file, Response
 from helpers import *
-from whisper.utils import write_vtt
 
 UPLOAD_FOLDER = 'static/uploads/'
 
@@ -21,23 +18,28 @@ def home():
 
 @app.post('/')
 def upload():
+    print(request.files)
+
     if 'file' not in request.files:
         flash("No file Uploaded")
         return redirect(request.url)
     else:
-        # clearing a folder
         clearFolder(folder=app.config['UPLOAD_FOLDER'])
 
-        # start uploading the file
         file = request.files['file']
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'file.' + file.mimetype.split("/")[1]))
 
-        # extract audio
+        if not file:
+            flash("No file Uploaded")
+            return redirect(request.url)
+
+        file.save(os.path.join(
+            app.config['UPLOAD_FOLDER'], 'file.' + file.mimetype.split("/")[1]))
+
         extract_audio_and_save(video_file=app.config['UPLOAD_FOLDER'] + '/file.mp4',
                                path_to_save=app.config['UPLOAD_FOLDER'] + '/file.wav')
 
-        transcribe_with_whisper(app.config['UPLOAD_FOLDER'] + '/file.wav', "static/file.json")
+        transcribe_with_whisper(
+            app.config['UPLOAD_FOLDER'] + '/file.wav', "static/file.json")
 
         flash("file uploaded")
         return redirect(location="/")
@@ -50,7 +52,6 @@ def translate():
 
     body = request.get_json()
 
-    # now i need to split the body
     segments = body.split('\n\n')
 
     for index, segment in enumerate(segments):
@@ -59,14 +60,10 @@ def translate():
         if len(segment) > 1:
             time = segment[0]
 
-            # main tokens
             start = time.split(' --> ')[0]
             end = time.split(' --> ')[1]
             text = segment[1]
 
-            print(text)
-
-            # now let's write to the json file
             fileSegments['segments'][index]['text'] = text
             fileSegments['segments'][index]['start'] = start
             fileSegments['segments'][index]['end'] = end
@@ -108,7 +105,6 @@ def translate_clear():
 
 @app.get('/export-to-vtt')
 def export_to_vtt():
-    # vtt_file = open('static/translated.vtt', 'w')
     file = open("static/translation.json", "r")
     text = json.loads(file.read())
     t = "WEBVTT\n"
@@ -116,9 +112,6 @@ def export_to_vtt():
     for segment in text:
         t += f"{format_timestamp(segment['start'])} --> {format_timestamp(segment['end'])}\n"
         t += f"{segment['text'].strip()}\n\n"
-
-    print(t)
-    # write_vtt(text, vtt_file)
 
     exporttovtt = pathlib.Path('static/translated.vtt')
     exporttovtt.write_bytes(t.encode('UTF-8'))
@@ -128,19 +121,12 @@ def export_to_vtt():
         mimetype="text/vtt",
         headers={"Content-disposition": "attachment; filename=translation.vtt"}
     )
-    # return send_from_directory(directory="static", path="translated.vtt", as_attachment=True)
 
 
 @app.get('/download')
 def download():
     return send_file("static/translated.vtt", as_attachment=True)
 
-
-# @app.after_request
-# def cache_control(response):
-#     response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
-#     response.headers['Cache-Control'] = 'public, max-age=0'
-#     return response
 
 if __name__ == "__main__":
     app.run(debug=True)
