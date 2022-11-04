@@ -106,18 +106,18 @@ def translate_clear():
 @app.get('/export-to-vtt')
 def export_to_vtt():
     file = open("static/translation.json", "r")
-    text = json.loads(file.read())
-    t = "WEBVTT\n"
+    segments = json.loads(file.read())
+    translation = "WEBVTT\n"
 
-    for segment in text:
-        t += f"{format_timestamp(segment['start'])} --> {format_timestamp(segment['end'])}\n"
-        t += f"{segment['text'].strip()}\n\n"
+    for segment in segments:
+        translation += f"{format_timestamp(segment['start'])} --> {format_timestamp(segment['end'])}\n"
+        translation += f"{segment['text'].strip()}\n\n"
 
     exporttovtt = pathlib.Path('static/translated.vtt')
-    exporttovtt.write_bytes(t.encode('UTF-8'))
+    exporttovtt.write_bytes(translation.encode('UTF-8'))
 
     return Response(
-        t,
+        translation,
         mimetype="text/vtt",
         headers={"Content-disposition": "attachment; filename=translation.vtt"}
     )
