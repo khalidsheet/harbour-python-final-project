@@ -48,8 +48,6 @@ def translate():
     file = open("static/file.json", "r")
     fileSegments = json.loads(file.read())
 
-    
-
     body = request.get_json()
 
     # now i need to split the body
@@ -57,7 +55,7 @@ def translate():
 
     for index, segment in enumerate(segments):
         segment = segment.split('\n')
-        
+
         if len(segment) > 1:
             time = segment[0]
 
@@ -66,14 +64,12 @@ def translate():
             end = time.split(' --> ')[1]
             text = segment[1]
 
-
             print(text)
-            
+
             # now let's write to the json file
             fileSegments['segments'][index]['text'] = text
             fileSegments['segments'][index]['start'] = start
             fileSegments['segments'][index]['end'] = end
-
 
     writeFile = open("static/file.json", "w")
     writeFile.write(json.dumps(fileSegments))
@@ -81,13 +77,12 @@ def translate():
     translatedText = []
     for entry in fileSegments['segments']:
         translatedText.append(entry['text'])
-    
 
     print(translatedText)
     translated = translate_with_google(translatedText)
 
     tanslationFile = open('static/translation.json', 'w')
-    
+
     translationSegments = []
     for index, entry in enumerate(translated['data']['translations']):
         translationSegments.append({
@@ -97,7 +92,6 @@ def translate():
             "end": float(fileSegments['segments'][index]['end']),
             "text": str(entry['translatedText']),
         })
-
 
     tanslationFile.write(json.dumps(translationSegments))
     return {}
@@ -122,20 +116,19 @@ def export_to_vtt():
     for segment in text:
         t += f"{format_timestamp(segment['start'])} --> {format_timestamp(segment['end'])}\n"
         t += f"{segment['text'].strip()}\n\n"
-        
+
     print(t)
     # write_vtt(text, vtt_file)
 
     exporttovtt = pathlib.Path('static/translated.vtt')
     exporttovtt.write_bytes(t.encode('UTF-8'))
 
-
     return Response(
         t,
         mimetype="text/vtt",
         headers={"Content-disposition": "attachment; filename=translation.vtt"}
     )
-    #return send_from_directory(directory="static", path="translated.vtt", as_attachment=True)
+    # return send_from_directory(directory="static", path="translated.vtt", as_attachment=True)
 
 
 @app.get('/download')

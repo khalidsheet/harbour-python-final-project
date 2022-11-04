@@ -56,7 +56,7 @@ def translate_with_google(q):
     params = {
         "key": "AIzaSyBHhyBEZA2yHlAUtuWjn1CvjRJD5JXLEdo",
         "q": q,
-        "target": "ar",
+        "target": "ru",
         "source": "en"
     }
     response = requests.post('https://translation.googleapis.com/language/translate/v2', params=params)

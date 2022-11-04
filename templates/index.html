@@ -127,6 +127,24 @@
 
     }
 
+    function getTranslation() {
+        fetch('/static/translation.json')
+        .then(data => data.json())
+        .then(data => {
+            let parsed = "";
+            console.log(data)
+            data.map((entry) => {
+            console.log(entry)
+                parsedData.push(entry)
+                parsed += `${entry.start} --> ${entry.end}\n`;
+                // parsed += `${new Date(entry.start * 1000).toISOString().substring(11, 23)} --> ${new Date(entry.end * 1000).toISOString().substring(11, 23)}\n`
+                parsed += `${entry.text}\n\n`
+            })
+            translation.innerHTML = parsed
+        })
+
+    }
+
     function clearTranscribe() {
       fetch('/translate-clear', { method: 'POST' })
         .then(data => {
@@ -146,17 +164,18 @@
         })
         .then(data => data.json())
         .then(data => {
-            console.log(data.data.translations)
-            parsedData.map((parsed, i) => {
-                translatedParsedData.push({...parsed, text: data.data.translations[i].translatedText})
-            });
+            // console.log(data.data.translations)
+            // parsedData.map((parsed, i) => {
+            //     translatedParsedData.push({...parsed, text: data.data.translations[i].translatedText})
+            // });
 
-            let translatedText = ""
-            translatedParsedData.map((entry) => {
-                translatedText += `${entry.time}\n`
-                translatedText += `${entry.text}\n\n`
-            })
-            translation.innerHTML = translatedText;
+            // let translatedText = ""
+            // translatedParsedData.map((entry) => {
+            //     translatedText += `${entry.time}\n`
+            //     translatedText += `${entry.text}\n\n`
+            // })
+            // translation.innerHTML = translatedText;
+            window.location.reload();
         })
     })
 
@@ -172,7 +191,7 @@
     }
 
     getTranscript()
-
+    getTranslation();
 
 </script>
 </body>
