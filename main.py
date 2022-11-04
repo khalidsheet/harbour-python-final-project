@@ -21,7 +21,7 @@ def upload():
     print(request.files)
 
     if 'file' not in request.files:
-        flash("No file Uploaded")
+        flash("No file uploaded.")
         return redirect(request.url)
     else:
         clearFolder(folder=app.config['UPLOAD_FOLDER'])
